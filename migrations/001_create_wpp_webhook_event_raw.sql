@@ -1,0 +1,22 @@
+CREATE TABLE wpp_webhook_event_raw (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  app_id VARCHAR(64) NOT NULL,
+  event_kind ENUM('MESSAGE','TEMPLATE','USER','UNKNOWN') NOT NULL DEFAULT 'UNKNOWN',
+  provider_event_id VARCHAR(128) NULL,
+  message_id VARCHAR(120) NULL,
+  whatsapp_message_id VARCHAR(120) NULL,
+  template_name VARCHAR(120) NULL,
+  template_provider_id VARCHAR(128) NULL,
+  event_status VARCHAR(40) NULL,
+  received_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  payload_json JSON NOT NULL,
+  processed TINYINT(1) NOT NULL DEFAULT 0,
+  attempts INT NOT NULL DEFAULT 0,
+  last_error VARCHAR(255) NULL,
+  processed_at DATETIME NULL,
+  dedupe_key VARCHAR(191) NOT NULL,
+  UNIQUE KEY uq_wpp_webhook_dedupe (dedupe_key),
+  KEY idx_wpp_webhook_processed (processed, received_at),
+  KEY idx_wpp_webhook_message (message_id),
+  KEY idx_wpp_webhook_template (template_name)
+);
